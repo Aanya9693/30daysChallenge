@@ -1,40 +1,76 @@
-#define ll long long
+// -----Backtracking------- O(2^n), O(k)----------
+
 class Solution {
-    ll getGCD(int a,int b){
-        if(b==0)return a;
-
-        return getGCD(b,a%b);
+private:
+    void solve(vector<vector<int>>&ans, vector<int>&temp, int startIndex, int k, int n, int &sum, int arr[]){
+        if(k==0){
+            if(sum==n){
+                sort(temp.begin(), temp.end());
+                ans.push_back(temp);
+            }
+            return;
+        }
+        for(int i=startIndex; i<9; i++){
+            sum += arr[i]; //take it
+            temp.push_back(arr[i]);
+            solve(ans, temp, i+1, k-1, n, sum, arr);
+            sum -= arr[i]; //leave it
+            temp.pop_back();
+        }
+        return;
     }
+
+
 public:
-    int minimizeSet(int div1, int div2, int cnt1, int cnt2) {
-        ll ans=INT_MAX;
-        ll low=1,high=INT_MAX;
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<vector<int>>ans;
+        int arr[9]={1, 2, 3, 4, 5, 6, 7, 8, 9};
+        vector<int>temp;
+        int sum=0;
+        solve(ans, temp, 0, k, n, sum, arr);
+        return ans;
+    }
+};
+
+// -----Recursion------ O(k*n), O(k)----------
+class Solution {
+public:
+    set<vector<int>>st;  //using set because it only stores unique value;
+    void solve(int k, int n, vector<int>temp, int idx){
+        if(k==0 && n!=0) return;
+        if(n==0 && k!= 0) return;
+        if(n==0 && k==0){
+            st.insert(temp);
+            return;
+        }
+
+        for(int i=idx+1; i<=9; i++){
+            if(i<=n){
+                temp.push_back(i);
+                solve(k-1, n-i, temp, i);
+                temp.pop_back();
+            }else{
+                break;
+            }
+        }
+    }
+
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<vector<int>>ans;
+        if(n>45 || n==0) return ans;
         
-        // Iterate with binary search to get Solution.
-        while(low<=high){
-            ll mid=(low+high)/2;
-            // Remaining Numbers Divisible by div1 from total mid numbers
-            ll total1=mid-mid/div1;
-            // Remaining Numbers Divisible by div2 from total mid numbers
-            ll total2=mid-mid/div2;
-
-            // GCD of both div1 and div2
-            ll gcd=getGCD(div1,div2);
-            // Get the LCM of 2 numbers
-            ll lcm=(ll)(((ll)div1)*((ll)div2))/gcd;
-
-            // Remaining numbers that are not divisible by div1 and div2 from total mid numbers.
-            ll temp=mid-mid/lcm;
-
-            // If we have all satisfied then 
-            // set the high value to left of mid and store the mid val as ans.
-            if(total1>=cnt1 and total2>=cnt2 and temp>=cnt1+cnt2){
-                high=mid-1;
-                ans=min(ans,mid);
+        for(int i=1; i<=9; i++){
+            vector<int>temp;
+            if(i<=n){
+                temp.push_back(i);
+                solve(k-1, n-i, temp, i);
+                temp.pop_back();
+            }else{
+                break;
             }
-            else{
-                low=mid+1;
-            }
+        }
+        for(auto itr : st){
+            ans.push_back(itr);
         }
         return ans;
     }
