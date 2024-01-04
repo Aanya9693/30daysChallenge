@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int dp[1001+999][1001];
+    int mod=1e9 + 7;
+    long long solve(int s, int e, int k, vector<vector<int>>& dp){
+        if(k==0){
+            return s==e;
+        }
+        if(dp[s+999][k] != -1){
+            return dp[s+999][k];
+        }
+
+        long long forw = solve(s+1,e,k-1,dp);
+        long long back = solve(s-1,e,k-1,dp);
+        return dp[999+s][k] = (forw+back)%mod;
+    }
+
+    int numberOfWays(int startPos, int endPos, int k) {
+        vector<vector<int>> dp(3000,vector<int>(k+1,-1));
+        return solve(startPos, endPos, k, dp)%mod;
+    }
+};
