@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
+        //first make a adjecency list
+        vector<vector<int>>adj(n, vector<int>(n, INT_MAX));
+        for(auto it:edges){
+            adj[it[0]][it[1]]=it[2];
+            adj[it[1]][it[0]]=it[2];
+        }
+        //coz dist of i to i will be 0
+        for(int i=0; i<n; i++){
+            adj[i][i]=0;
+        }
+
+        //make distance 2-D matrix using FLOYD WARSHAL ALGO
+        for(int k=0; k<n; k++){
+            for(int i=0; i<n; i++){
+                for(int j=0; j<n; j++){
+                    //if adj[i][k] or adj[k][i] is INT_MAX it means 
+                    //there is not path exist between these 2
+                    if(adj[i][k]==INT_MAX || adj[k][j]==INT_MAX)
+                        continue;
+                    adj[i][j]=min(adj[i][j], adj[i][k]+adj[k][j]);
+                }
+            }
+        }
+
+        //assume maximum number of path can exist from one city
+        int cntCity=n; 
+        int city=-1; //intial city count
+        //search from each city to each city how many have path weight less than distanceThreshold value
+        for(int i=0; i<n; i++){
+            int cnt=0;
+            for(int j=0; j<n; j++){
+                if(adj[i][j]<=distanceThreshold){
+                    cnt++;
+                }
+            }
+            if(cnt<=cntCity){
+                cntCity=cnt;
+                city=i;
+            }
+        }
+        return city;
+    }
+};
