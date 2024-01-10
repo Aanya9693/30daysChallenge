@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        vector<string>ans={};
+        int left=0, right=0;
+        int n=s.size();
+
+        if(n<=10) return ans;
+        
+        map<string, int>mp;
+        string str="";
+
+        while(right<=n){
+            if(str.length()<10 && right<n){
+                str+=s[right];
+                right++;
+            }else if(str.length()==10){
+                ans.push_back(str);
+                str.erase(str.begin()); //delete the first element
+                left++;
+            }else{
+                break;
+            }
+        }
+
+        for(int e=0; e<ans.size(); e++){
+            mp[ans[e]]++;
+        }
+        vector<string>res;
+        for(auto it:mp){
+            if(it.second>1){
+                res.push_back(it.first);
+            }
+        }
+        return res;
+    }
+};
