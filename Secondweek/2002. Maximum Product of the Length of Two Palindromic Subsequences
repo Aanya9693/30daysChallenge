@@ -1,0 +1,57 @@
+//instead of storing the char we are storing the indices of all subarray
+//it will be easier to find duplicate. if we store char it can be duplicate
+
+class Solution {
+public:
+    vector<vector<int>>allSubarr;
+    bool check(vector<int>&a,vector<int>&b){       
+        for(int i=0;i<a.size();i++)
+            for(int j=0;j<b.size();j++)
+                //if from the same index return false
+                if(a[i]==b[j]) return false;
+        return true;
+    }
+    bool isPalin(string &s,vector<int>&ans){
+        int a=0,b=ans.size()-1;
+        while(a<=b){
+            if(s[ans[a]]!=s[ans[b]]) return false;
+            a++;
+            b--;
+        }
+        return true;    
+    }
+    void findStr(string& s, vector<int>&temp, int idx){
+        //if at any point string is palindrome 
+        //store it in ans
+        if(isPalin(s, temp)){
+            allSubarr.push_back(temp);
+        }
+        //idx is greater than length return
+        if(idx>=s.length()) return;
+        //take that char
+        temp.push_back(idx);
+        findStr(s, temp, idx+1);
+        //leave the char
+        temp.pop_back();
+        findStr(s, temp, idx+1);
+    }
+    int maxProduct(string s) {
+        int ans=0;
+        vector<int>temp;
+        //find all possible substring in allSubarr
+        findStr(s, temp, 0);
+        //check for all subarray if any 2 gives the max product value
+        for(int i=0; i<allSubarr.size(); i++){
+            for(int j=i+1; j<allSubarr.size(); j++){
+                //store the product
+                int x=(int)allSubarr[i].size()*allSubarr[j].size();
+                //check if selected 2 strings char are not from the same index
+                if(check(allSubarr[i], allSubarr[j])){
+                    //store max value of x
+                    ans=max(ans, x);
+                }
+            }
+        }
+        return ans;
+    }
+};
