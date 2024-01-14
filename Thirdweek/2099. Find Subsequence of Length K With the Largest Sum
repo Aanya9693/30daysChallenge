@@ -1,0 +1,61 @@
+//we need to find the subsequence so need to maintain the position of the subsequence
+//similarly we can solve using priority queue
+class Solution {
+public:
+    vector<int> maxSubsequence(vector<int>& nums, int k) {
+        int n=nums.size();
+        vector<pair<int, int>>v(n);
+        vector<int>ans(k);
+        for(int i=0; i<n; i++){
+            v[i]={nums[i], i};
+        }
+        sort(v.rbegin(), v.rend());  // Sort in descending order
+
+        // Sort the first k elements based on the original index
+        sort(v.begin(), v.begin() + k, [](const auto& a, const auto& b) {
+            return a.second < b.second;
+        });
+        for(int i=0; i<k; i++){
+            ans[i]=v[i].first;
+        }
+        return ans;
+    }
+};
+
+//no need of sliding window algorithm because we are not finding subarray 
+//instead we are getting subsequence
+
+//--------BACKTRACKING WILL GIVE TLE----------
+
+// class Solution {
+// public:
+//     vector<int>temp;
+//     vector<int>fina;
+//     int maxi=INT_MIN;
+//     void solve(vector<int>& nums, int k, int ind){
+//         if(ind>=nums.size()){
+//             if(k==temp.size()){
+//                 int sum=accumulate(temp.begin(), temp.end(), 0);
+//                 if(sum>maxi){
+//                     fina=temp;
+//                     maxi=sum;
+//                 }
+//             }
+//             return;
+//         }
+
+//         //taken
+//         temp.push_back(nums[ind]);
+//         solve(nums, k, ind+1);
+//         temp.pop_back();
+//         //not taken
+//         solve(nums, k, ind+1);
+
+//     }
+
+//     vector<int> maxSubsequence(vector<int>& nums, int k) {
+//         // vector<int>ans;
+//         solve(nums, k, 0);
+//         return fina;
+//     }
+// };
